@@ -21,7 +21,7 @@ exports.getMessage = function(room) {
 };
 
 exports.addMessage = function(message, room) {
-  var date = new Date().dateString;
+  var date = new Date();
   message.createdAt = date;
   message.objectId = Math.floor(Math.random() * 1000000).toString();
   message.roomname = _.escape(message.roomname) || _.escape(room);

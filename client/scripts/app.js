@@ -2,7 +2,7 @@
 var $chatFeed         = $('.chat');
 var friends           = [];
 var rooms             = [];
-var selectedRoom      = 'All';
+var selectedRoom      = 'messages';
 var userName          = window.prompt("Please enter your username");
 var recentMessageId;
 
@@ -22,6 +22,7 @@ var getMessages = function() {
 
 var displayMessages = function(data) {
   // initialize local vars
+  data = JSON.parse(data);
   console.log(data);
   var messages = data.results.reverse(); // order mesgs from server in reverse chrono
   var message;
@@ -45,7 +46,7 @@ var displayMessages = function(data) {
 
     // cleanup unwanted values in roomName
     roomName = (roomName === undefined || roomName === null || roomName.trim() === '') ?
-                'default' :
+                'messages' :
                 roomName.trim();
 
     updateRooms(roomName);
@@ -127,7 +128,7 @@ var updateRooms = function(room) {
 // Show/Hide messages based on user selected Room
 var filterMessagesByRoom = function(roomName) {
   $('.message').each(function(){
-    if ((roomName === 'All') || ($(this).data('roomname') === roomName)) {
+    if ((roomName === 'messages') || ($(this).data('roomname') === roomName)) {
       $(this).show();
     } else {
       $(this).hide();

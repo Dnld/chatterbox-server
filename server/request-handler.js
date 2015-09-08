@@ -40,22 +40,38 @@ exports.requestHandler = function(request, response) {
   //
   // You will need to change this if you are sending something
   // other than plain text, like JSON or HTML.
-  headers['Content-Type'] = "application/JSON";
 
   // .writeHead() writes to the request line and headers of the response,
   // which includes the status and all headers.
-  response.writeHead(statusCode, headers);
 
-  messages.addMessage({roomname: 'room1', text: 'Hi!', username: 'Erik'});
+  // messages.addMessage({roomname: 'room1', text: 'Hi!', username: 'Erik'});
 
-  if (request.method === 'GET' && request.url === '/classes/messages') {
+  if (request.method === 'OPTIONS' && request.url === '/classes/messages') {
+    headers['Allow'] = "GET, POST, PUT, DELETE, OPTIONS";
+    response.writeHead(statusCode, headers);
+    response.end();
+  } else if (request.method === 'GET' && request.url === '/classes/messages') {
+    headers['Content-Type'] = "application/JSON";
+    response.writeHead(statusCode, headers);
     response.write(JSON.stringify(messages.getMessage()));
+    response.end();
+  } else if (request.method === 'POST' && request.url === '/classes/messages') {
+    var body = '';
+    request.on('data', function(data) {
+      body += data;
+    });
+    request.on('end', function() {
+      statusCode = messages.addMessage(JSON.parse(body)) ? 201 : 400;
+      response.writeHead(statusCode, headers);
+      response.end();
+      console.log(statusCode);
+    });
+  } else {
+    statusCode = 404;
+    response.writeHead(statusCode, headers);
+    response.end();
   }
-  /*
-    if (request.method === 'POST' && request.url === '/classes/messages') {
 
-    }
-  */
   // Make sure to always call response.end() - Node may not send
   // anything back to the client until you do. The string you pass to
   // response.end() will be the body of the response - i.e. what shows
@@ -63,7 +79,6 @@ exports.requestHandler = function(request, response) {
   //
   // Calling .end "flushes" the response's internal buffer, forcing
   // node to actually send all the data over to the client.
-  response.end();
 };
 
 // These headers will allow Cross-Origin Resource Sharing (CORS).
@@ -81,4 +96,3 @@ var defaultCorsHeaders = {
   "access-control-allow-headers": "content-type, accept",
   "access-control-max-age": 10 // Seconds.
 };
-

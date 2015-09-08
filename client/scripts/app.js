@@ -94,7 +94,7 @@ $('.submit-btn').on('click', function(event){
 
   // AJAX Post to Parse server
   $.ajax({
-    url: 'https://api.parse.com/1/classes/chatterbox',
+    url: 'http://127.0.0.1:3000/classes/messages',
     type: 'POST',
     data: JSON.stringify(message),
     contentType: 'application/JSON',

@@ -4,7 +4,7 @@ exports.storage = [];
 
 exports.getMessage = function() {
   var temp = {};
-  temp.results = this.storage.slice(-100);
+  temp.results = this.storage.slice(0, 100);
   return temp;
 };
 
@@ -17,5 +17,7 @@ exports.addMessage = function(message) {
   message.updatedAt = date;
   message.username = _.escape(message.username);
 
-  this.storage.push(message);
+  var priorLength = this.storage.length;
+  this.storage.unshift(message);
+  return this.storage.length === priorLength + 1;
 };

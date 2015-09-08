@@ -12,6 +12,7 @@ this file and include it in basic-server.js so that it actually works.
 
 **************************************************************/
 var messages = require("./messages.js");
+var url = require("url");
 
 exports.requestHandler = function(request, response) {
   // Request and Response come from node's http module.
@@ -44,28 +45,29 @@ exports.requestHandler = function(request, response) {
   // .writeHead() writes to the request line and headers of the response,
   // which includes the status and all headers.
 
-  // messages.addMessage({roomname: 'room1', text: 'Hi!', username: 'Erik'});
-
-  if (request.method === 'OPTIONS' && request.url === '/classes/messages') {
-    headers['Allow'] = "GET, POST, PUT, DELETE, OPTIONS";
-    response.writeHead(statusCode, headers);
-    response.end();
-  } else if (request.method === 'GET' && request.url === '/classes/messages') {
-    headers['Content-Type'] = "application/JSON";
-    response.writeHead(statusCode, headers);
-    response.write(JSON.stringify(messages.getMessage()));
-    response.end();
-  } else if (request.method === 'POST' && request.url === '/classes/messages') {
-    var body = '';
-    request.on('data', function(data) {
-      body += data;
-    });
-    request.on('end', function() {
-      statusCode = messages.addMessage(JSON.parse(body)) ? 201 : 400;
+  var path = url.parse(request.url).pathname.split('/');
+  if (path.length < 2) {
+    // to be completed for extra credit
+  } else if (path[1] === 'classes') {
+    if (request.method === 'OPTIONS') {
+      headers['Allow'] = "GET, POST, PUT, DELETE, OPTIONS";
       response.writeHead(statusCode, headers);
       response.end();
-      console.log(statusCode);
-    });
+    } else if (request.method === 'GET') {
+      headers['Content-Type'] = "application/JSON";
+      response.writeHead(statusCode, headers);
+      response.end(JSON.stringify(messages.getMessage(path[2])));
+    } else if (request.method === 'POST') {
+      var body = '';
+      request.on('data', function(data) {
+        body += data;
+      });
+      request.on('end', function() {
+        statusCode = messages.addMessage(JSON.parse(body), path[2]) ? 201 : 400;
+        response.writeHead(statusCode, headers);
+        response.end();
+      });
+    }
   } else {
     statusCode = 404;
     response.writeHead(statusCode, headers);

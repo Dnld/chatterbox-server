@@ -13,6 +13,7 @@ this file and include it in basic-server.js so that it actually works.
 **************************************************************/
 var messages = require("./messages.js");
 var url = require("url");
+var fs = require("fs");
 
 exports.requestHandler = function(request, response) {
   // Request and Response come from node's http module.
@@ -46,9 +47,29 @@ exports.requestHandler = function(request, response) {
   // which includes the status and all headers.
 
   var path = url.parse(request.url).pathname.split('/');
-  if (path.length < 2) {
-    // to be completed for extra credit
-  } else if (path[1] === 'classes') {
+  if (path.length <= 2) {
+    if (request.method === 'GET') {
+      console.log('get triggered');
+      headers['Content-Type'] = "text/html";
+      response.writeHead(statusCode, headers);
+      response.write(fs.readFileSync('../client/index.html'));
+      response.end();
+    }
+  } else if (path[1] === 'scripts' || path[1] == 'bower_components') {
+    if (request.method === 'GET') {
+      headers['Content-Type'] = "text/javascript";
+      response.writeHead(statusCode, headers);
+      response.write(fs.readFileSync('../client' + request.url));
+      response.end();
+    }
+  } else if (path[1] === 'styles') {
+    if (request.method === 'GET') {
+      headers['Content-Type'] = "text/css";
+      response.writeHead(statusCode, headers);
+      response.write(fs.readFileSync('../client' + request.url));
+      response.end();
+    }
+  }else if (path[1] === 'classes') {
     if (request.method === 'OPTIONS') {
       headers['Allow'] = "GET, POST, PUT, DELETE, OPTIONS";
       response.writeHead(statusCode, headers);

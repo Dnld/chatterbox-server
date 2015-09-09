@@ -1,6 +1,22 @@
 var _ = require("../node_modules/underscore/underscore.js");
+var fs = require("fs");
 
 exports.storage = [];
+
+exports.loadFile = function() {
+  try {
+    var messages = fs.readFileSync("./messages.txt", 'utf8').split('\n');
+
+    for (var i = 0, j = messages.length; i < j - 1; i++) {
+      this.storage.unshift(JSON.parse(messages[i]));
+    }
+  }
+  catch(err) {
+    console.log('No file available for loading');
+  }
+};
+
+exports.loadFile();
 
 exports.getMessage = function(room) {
   var tempObj = {};
@@ -31,5 +47,12 @@ exports.addMessage = function(message, room) {
 
   var priorLength = this.storage.length;
   this.storage.unshift(message);
+  fs.appendFile("./messages.txt", JSON.stringify(message) + "\n", function(err) {
+    if (err) {
+      throw err;
+    } else {
+      console.log('message appended to file');
+    }
+  });
   return this.storage.length === priorLength + 1;
 };

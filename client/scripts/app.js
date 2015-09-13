@@ -1,4 +1,7 @@
 // Initialize all global vars
+module.exports = (function() {
+
+
 var $chatFeed         = $('.chat');
 var friends           = [];
 var rooms             = [];
@@ -181,4 +184,7 @@ $(document).on('click', '.username-link', function(event) {
   // Run the highlight method on newly
   // updated friend's list
   highlightFriendsMessages();
+});
+
+
 });

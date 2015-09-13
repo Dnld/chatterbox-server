@@ -1,0 +1,2 @@
+{"username":"Don","text":"don","roomname":"messages","createdAt":"2015-09-09T00:00:03.049Z","objectId":"24401","updatedAt":"2015-09-09T00:00:03.049Z"}
+{"username":"Don","text":"new file","roomname":"messages","createdAt":"2015-09-09T00:00:21.559Z","objectId":"64373","updatedAt":"2015-09-09T00:00:21.559Z"}
